@@ -1,0 +1,50 @@
+{
+  "id": "one_virtual_user",
+  "series": "one_x",
+  "hook": "1000 virtual user của bạn đang làm gì?",
+  "takeaway": "Một VU = một người thật: có tài khoản riêng, có lúc nghỉ, hiếm khi ghi.",
+  "voice": [
+    { "id": "s1", "text": "Bạn chạy load test 1000 virtual user. Nhưng một virtual user thực ra là cái gì?" },
+    { "id": "s2", "text": "Nó phải giống một người thật: có tài khoản riêng và token đăng nhập riêng." },
+    { "id": "s3", "text": "Việc đầu tiên: mở feed." },
+    { "id": "s4", "text": "Rồi đọc vài giây, bấm vào một bài, lại đọc tiếp." },
+    { "id": "s5", "text": "Chỉ mười lăm phần trăm vòng lặp là bấm like, và hai phần trăm là viết bài." },
+    { "id": "s6", "text": "Nghỉ một lúc, rồi lặp lại từ đầu." },
+    { "id": "s7", "text": "Bỏ thời gian chờ đi là bạn đang test một con bot, không phải người dùng." }
+  ],
+  "scenes": [
+    {
+      "id": "anatomy",
+      "layout": "card+cycle",
+      "title": "what is ONE user?",
+      "elements": [
+        {
+          "kind": "actor",
+          "id": "vu",
+          "label": "virtual user",
+          "badge": "k6",
+          "fields": [
+            { "label": "own account", "value": "@user_4821", "tone": "primary" },
+            { "label": "own auth token (JWT)", "value": "eyJhbGciOiJIUzI1…", "tone": "accent" }
+          ]
+        },
+        { "kind": "box", "id": "feed", "label": "load feed", "sub": "GET /feed", "mono": true, "tone": "accent" },
+        { "kind": "box", "id": "wait1", "label": "wait", "sub": "3–7 s" },
+        { "kind": "box", "id": "post", "label": "open a post", "sub": "GET /posts/:id", "mono": true, "tone": "accent" },
+        { "kind": "box", "id": "wait2", "label": "wait", "sub": "3–8 s" },
+        { "kind": "box", "id": "like", "label": "like it", "sub": "15 % of loops", "tone": "danger", "stroke": "dashed" },
+        { "kind": "box", "id": "write", "label": "write a post", "sub": "2 % of loops", "tone": "danger", "stroke": "dashed" },
+        { "kind": "box", "id": "wait3", "label": "wait", "sub": "5–15 s" },
+        { "kind": "note", "id": "repeat", "text": "↻ repeat" }
+      ],
+      "steps": [
+        { "at": "s2", "action": "draw", "targets": ["vu"] },
+        { "at": "s3", "action": "draw", "targets": ["feed"] },
+        { "at": "s4", "action": "draw", "targets": ["wait1", "post", "wait2"] },
+        { "at": "s5", "action": "draw", "targets": ["like", "write"] },
+        { "at": "s6", "action": "draw", "targets": ["wait3", "repeat"] },
+        { "at": "s7", "action": "pulse", "targets": ["wait1", "wait2", "wait3"] }
+      ]
+    }
+  ]
+}

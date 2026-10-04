@@ -1,0 +1,33 @@
+{
+  "name": "devdraw",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "validate": "tsx scripts/validate.ts",
+    "sync": "tsx scripts/sync.ts",
+    "studio": "tsx scripts/sync.ts && remotion studio src/index.ts",
+    "render": "tsx scripts/render.ts",
+    "typecheck": "tsx scripts/sync.ts && tsc"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@fontsource/jetbrains-mono": "^5.3.0",
+    "@fontsource/patrick-hand": "^5.3.0",
+    "@remotion/bundler": "^4.0.532",
+    "@remotion/cli": "^4.0.532",
+    "@remotion/renderer": "^4.0.532",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "remotion": "^4.0.532",
+    "roughjs": "^4.6.6",
+    "zod": "4.5.4"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.4",
+    "@types/react": "^18.3.31",
+    "tsx": "^4.23.15",
+    "typescript": "^7.0.2"
+  },
+  "private": true
+}
