@@ -14,8 +14,9 @@ bằng sơ đồ kiểu Excalidraw. Tiếng Việt, giọng như đồng nghiệ
 
 ## Quy trình một video
 
-1. Người dùng tạo `videos/NNN-slug/idea.md` (chủ đề, điểm mấu chốt).
-2. Claude đọc `idea.md` → viết `script.json` → `npm run validate -- NNN` đến khi pass.
+1. Người dùng đưa nguyên liệu (link, file, ảnh, mô tả) → skill `idea-intake` ghi `videos/NNN-slug/idea.md`
+   → `npm run check-idea -- NNN` đến khi pass. Người dùng đổi `status: approved` khi đã duyệt.
+2. Chỉ viết script khi idea `status: approved`. Claude đọc `idea.md` → viết `script.json` → `npm run validate -- NNN` đến khi pass.
 3. Claude tự soi lại độ chính xác kỹ thuật, liệt kê chỗ nào đang đơn giản hoá quá mức → người dùng duyệt.
 4. (chưa có) `npm run voice -- NNN` → `audio.mp3` + `timings.json`.
 5. `npm run studio` → xem preview trong Remotion Studio.
@@ -49,8 +50,9 @@ Muốn dùng thì phải dựng trước: component trong `src/layouts/`, luật
 - `schema/` — zod schema chung cho mọi video
 - `src/` — Remotion: `timeline.ts` (frame), `state.ts` (trạng thái element theo frame),
   `elements/` (nét vẽ tay bằng rough.js), `layouts/`, `theme.ts` (màu, font, vùng an toàn TikTok)
-- `scripts/` — `validate`, `sync` (sinh `src/videos.generated.ts`, đừng sửa tay), `render`
-- `videos/NNN-slug/` — `idea.md` (người), `script.json` (Claude), còn lại do code sinh
+- `.claude/skills/idea-intake/` — nguyên liệu thô → idea.md (khung: `template.md`)
+- `scripts/` — `check-idea`, `validate`, `sync` (sinh `src/videos.generated.ts`, đừng sửa tay), `render`
+- `videos/NNN-slug/` — `idea.md` (skill idea-intake, người duyệt), `script.json` (Claude), còn lại do code sinh
 - `backlog.md` — ý tưởng chưa làm
 
 ## Chưa có (làm sau, đúng thứ tự)

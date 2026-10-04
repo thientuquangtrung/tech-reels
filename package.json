@@ -7,7 +7,8 @@
     "sync": "tsx scripts/sync.ts",
     "studio": "tsx scripts/sync.ts && remotion studio src/index.ts",
     "render": "tsx scripts/render.ts",
-    "typecheck": "tsx scripts/sync.ts && tsc"
+    "typecheck": "tsx scripts/sync.ts && tsc",
+    "check-idea": "tsx scripts/check-idea.ts"
   },
   "author": "",
   "license": "ISC",
@@ -21,6 +22,7 @@
     "react-dom": "^18.3.1",
     "remotion": "^4.0.532",
     "roughjs": "^4.6.6",
+    "yaml": "^2.9.1",
     "zod": "4.5.4"
   },
   "devDependencies": {

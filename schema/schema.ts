@@ -7,7 +7,7 @@ import { z } from "zod";
  */
 
 // ---- Giới hạn cho màn hình điện thoại (code kiểm, không tin model) ----
-const LIMITS = {
+export const LIMITS = {
   hookWords: 10,
   labelChars: 22,
   subChars: 28,

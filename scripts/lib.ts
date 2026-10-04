@@ -5,18 +5,18 @@ import { checkVideo } from "../src/check";
 export const ROOT = join(__dirname, "..");
 export const VIDEOS = join(ROOT, "videos");
 
-/** Thư mục video có script.json, sắp theo tên. */
-export function videoDirs(): string[] {
+/** Thư mục video có file `file` (mặc định script.json), sắp theo tên. */
+export function videoDirs(file = "script.json"): string[] {
   return readdirSync(VIDEOS, { withFileTypes: true })
-    .filter((d) => d.isDirectory() && existsSync(join(VIDEOS, d.name, "script.json")))
+    .filter((d) => d.isDirectory() && existsSync(join(VIDEOS, d.name, file)))
     .map((d) => d.name)
     .sort();
 }
 
 /** "001" hoặc "001-one-user" → "001-one-user". */
-export function resolveDir(arg: string | undefined): string {
+export function resolveDir(arg: string | undefined, file = "script.json"): string {
   if (!arg) throw new Error("thiếu id video, vd: 001");
-  const hits = videoDirs().filter((d) => d === arg || d.startsWith(arg + "-") || d.startsWith(arg));
+  const hits = videoDirs(file).filter((d) => d === arg || d.startsWith(arg + "-") || d.startsWith(arg));
   if (hits.length !== 1) throw new Error(`"${arg}" khớp ${hits.length} thư mục: ${hits.join(", ") || "(không có)"}`);
   return hits[0];
 }

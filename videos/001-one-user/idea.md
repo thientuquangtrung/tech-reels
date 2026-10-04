@@ -1,9 +1,30 @@
-# 001 — Một virtual user là gì?
+---
+series: one_x
+layout: card+cycle
+sources:
+  - ảnh sơ đồ "what is ONE user?" (k6, tham khảo)
+status: draft
+---
 
-Series: ONE x là gì
+# Một virtual user là gì?
 
-Điểm mấu chốt:
-- 1000 VU không phải 1000 request song song — mỗi VU phải hành xử như một người thật.
-- Mỗi VU có tài khoản + token riêng (không dùng chung 1 token cho cả bài test).
-- Phần lớn thời gian là đọc / chờ; ghi dữ liệu rất hiếm (like 15%, viết bài 2%).
-- Bỏ think time = đang test một con bot, số liệu sẽ sai.
+## Một ý duy nhất
+
+Một virtual user phải hành xử như một người thật: tài khoản riêng, có lúc nghỉ, hiếm khi ghi.
+
+## Điểm mấu chốt
+
+- Mỗi VU có tài khoản và token đăng nhập riêng. [nguồn 1]
+- Một vòng lặp: mở feed, chờ, mở bài, chờ, thỉnh thoảng like hoặc viết bài, chờ, lặp lại. [nguồn 1]
+- Thao tác ghi rất hiếm: like 15% vòng, viết bài 2% vòng. [nguồn 1]
+
+## Góc của tôi
+
+## Hook ứng viên
+
+- "1000 virtual user của bạn đang làm gì?"
+
+## Cần kiểm trước khi viết script
+
+- [ ] Nguồn cho ý "bỏ think time là đang test bot" (vd: tài liệu k6 về think time)
+- [ ] Tỉ lệ 15% / 2% là số minh hoạ hay số đo thật?
