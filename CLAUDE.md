@@ -40,8 +40,9 @@ Schema: `schema/schema.ts`. Ví dụ chuẩn: `videos/001-one-user/script.json`.
 | layout | dùng khi | luật |
 |---|---|---|
 | `card+cycle` | "ONE x là gì": một thực thể + vòng lặp hành vi của nó | đúng 1 `actor`, 3–7 `box` theo thứ tự vòng (mũi tên tự nối), ≤1 `note` ở giữa |
+| `compare` | sai vs đúng, nửa trên / nửa dưới | đúng 2 `verdict` (một wrong, một right), element đầu là verdict; element sau mỗi verdict thuộc nửa đó. Mỗi nửa: ≤1 `code`, ≤3 `box` (một hàng), ≤1 `note`, có ít nhất code hoặc box. Không `actor`/`arrow`/`flow`. Tràn khung → validate báo |
 
-Layout còn lại trong schema (`flow`, `compare`, `stack`, `code`) **chưa dựng** — validate sẽ báo lỗi.
+Layout còn lại trong schema (`flow`, `stack`, `code`) **chưa dựng** — validate sẽ báo lỗi.
 Muốn dùng thì phải dựng trước: component trong `src/layouts/`, luật trong `src/layouts/rules.ts`,
 đăng ký trong `src/layouts/index.tsx`.
 
