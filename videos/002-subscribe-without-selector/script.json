@@ -1,0 +1,60 @@
+{
+  "id": "subscribe_without_selector",
+  "series": "wrong_right",
+  "hook": "Tick một checkbox, cả trang render lại",
+  "takeaway": "Không selector = nghe cả store. Chỉ lấy đúng phần mình cần.",
+  "voice": [
+    { "id": "s1", "text": "Bạn tick đúng một checkbox, mà cả trang render lại. Vì sao?" },
+    { "id": "s2", "text": "Thủ phạm thường chỉ là một dòng: gọi store Zustand mà không truyền selector." },
+    { "id": "s3", "text": "Không có selector, component nhận về cả store, tức là nghe mọi thay đổi trong đó." },
+    { "id": "s4", "text": "Trang này có bảng, và thanh phân trang chỉ cần số trang." },
+    { "id": "s5", "text": "Tick một checkbox, chỉ danh sách row đang chọn thay đổi, nhưng phân trang cũng render lại." },
+    { "id": "s6", "text": "Cách sửa: truyền selector, mỗi component chỉ lấy đúng field nó dùng." },
+    { "id": "s7", "text": "Giờ tick checkbox, chỉ bảng render lại. Phân trang đứng im." },
+    { "id": "s8", "text": "Cần nhiều field một lúc thì bọc useShallow, không thì object mới tạo mỗi lần luôn bị coi là đã đổi." },
+    { "id": "s9", "text": "Component nghe gì, thì mới nên render vì cái đó." }
+  ],
+  "scenes": [
+    {
+      "id": "compare",
+      "layout": "compare",
+      "title": "useStore() vs selector",
+      "elements": [
+        { "kind": "verdict", "id": "w_verdict", "verdict": "wrong", "text": "nghe cả store" },
+        {
+          "kind": "code",
+          "id": "w_code",
+          "lang": "ts",
+          "lines": ["// Pagination.tsx", "const { page } = useStore()"]
+        },
+        { "kind": "box", "id": "w_table", "label": "Table", "sub": "dùng: selected" },
+        { "kind": "box", "id": "w_pagination", "label": "Pagination", "sub": "dùng: page", "tone": "danger" },
+        { "kind": "note", "id": "w_note", "text": "tick 1 ô → Pagination cũng render", "tone": "danger" },
+
+        { "kind": "verdict", "id": "r_verdict", "verdict": "right", "text": "chỉ nghe phần mình cần" },
+        {
+          "kind": "code",
+          "id": "r_code",
+          "lang": "ts",
+          "lines": ["// Pagination.tsx", "const page = useStore((s) => s.page)"]
+        },
+        { "kind": "box", "id": "r_table", "label": "Table", "sub": "dùng: selected" },
+        { "kind": "box", "id": "r_pagination", "label": "Pagination", "sub": "dùng: page", "tone": "success" },
+        { "kind": "note", "id": "r_note", "text": "nhiều field → useShallow", "tone": "success" }
+      ],
+      "steps": [
+        { "at": "s2", "action": "draw", "targets": ["w_verdict", "w_code"] },
+        { "at": "s3", "action": "highlight", "targets": ["w_code"] },
+        { "at": "s4", "action": "draw", "targets": ["w_table", "w_pagination"] },
+        { "at": "s5", "action": "pulse", "targets": ["w_table", "w_pagination"] },
+        { "at": "s5", "action": "draw", "targets": ["w_note"] },
+        { "at": "s6", "action": "dim", "targets": ["w_verdict", "w_code", "w_table", "w_pagination", "w_note"] },
+        { "at": "s6", "action": "draw", "targets": ["r_verdict", "r_code"] },
+        { "at": "s7", "action": "draw", "targets": ["r_table", "r_pagination"] },
+        { "at": "s7", "action": "pulse", "targets": ["r_table"] },
+        { "at": "s7", "action": "dim", "targets": ["r_pagination"] },
+        { "at": "s8", "action": "draw", "targets": ["r_note"] }
+      ]
+    }
+  ]
+}
