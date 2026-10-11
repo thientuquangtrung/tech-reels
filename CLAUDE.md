@@ -18,9 +18,14 @@ bằng sơ đồ kiểu Excalidraw. Tiếng Việt, giọng như đồng nghiệ
    → `npm run check-idea -- NNN` đến khi pass. Người dùng đổi `status: approved` khi đã duyệt.
 2. Chỉ viết script khi idea `status: approved`. Claude đọc `idea.md` → viết `script.json` → `npm run validate -- NNN` đến khi pass.
 3. Claude tự soi lại độ chính xác kỹ thuật, liệt kê chỗ nào đang đơn giản hoá quá mức → người dùng duyệt.
-4. (chưa có) `npm run voice -- NNN` → `audio.mp3` + `timings.json`.
-5. `npm run studio` → xem preview trong Remotion Studio.
-6. `npm run render -- NNN` → `videos/NNN-slug/out.mp4`.
+4. `npm run studio` / `npm run render -- NNN` → video **chưa tiếng**, timing ước lượng theo số từ.
+   Sửa script/hình/phụ đề ở bước này cho đến khi người dùng chốt.
+5. **Giọng đọc là bước cuối**, chỉ làm khi người dùng đã chốt bước 4:
+   - **Tự thu (mặc định):** `npm run record -- NNN` → mở http://localhost:3123. Mỗi câu hiện kèm đoạn `out.mp4`
+     tương ứng; Space ghi/dừng, tự cắt lặng đầu/cuối, lưu `public/voice/NNN-slug/sN.mp3`, đủ câu thì ghi `timings.json`.
+   - **ElevenLabs API** (cần credit API riêng, credit gói thường chỉ dùng trên web): `npm run voice -- NNN` xem trước
+     số ký tự, `--go` mới gọi API. Claude **không tự chạy `--go`** khi chưa được người dùng đồng ý.
+6. `npm run render -- NNN` → `videos/NNN-slug/out.mp4` có tiếng, hình chạy theo thời lượng thật.
 
 Xem nhanh vài khung hình mà không render cả video: `npm run render -- NNN --still 90,400,800`.
 
@@ -52,13 +57,14 @@ Muốn dùng thì phải dựng trước: component trong `src/layouts/`, luật
 - `src/` — Remotion: `timeline.ts` (frame), `state.ts` (trạng thái element theo frame),
   `elements/` (nét vẽ tay bằng rough.js), `layouts/`, `theme.ts` (màu, font, vùng an toàn TikTok)
 - `.claude/skills/idea-intake/` — nguyên liệu thô → idea.md (khung: `template.md`)
-- `scripts/` — `check-idea`, `validate`, `sync` (sinh `src/videos.generated.ts`, đừng sửa tay), `render`
+- `scripts/` — `check-idea`, `validate`, `sync` (sinh `src/videos.generated.ts`, đừng sửa tay), `render`, `record` (+ `record.html`), `voice`
+- `public/voice/NNN-slug/` — mp3 từng câu thoại + `manifest.json` (text đã đọc, thời lượng, nguồn). Commit vào git.
+  Sửa câu thoại sau khi đã có giọng → `sync` cảnh báo và tạm bỏ tiếng; `record` đánh dấu câu cần thu lại, `voice --go` chỉ gen lại câu đã sửa.
+  Key: `ELEVENLABS_API_KEY` trong `.env.local` (gitignore); đổi giọng/model qua `ELEVENLABS_VOICE_ID` / `ELEVENLABS_MODEL_ID`.
 - `videos/NNN-slug/` — `idea.md` (skill idea-intake, người duyệt), `script.json` (Claude), còn lại do code sinh
 - `backlog.md` — ý tưởng chưa làm
 
 ## Chưa có (làm sau, đúng thứ tự)
 
-1. `scripts/voice.ts` — TTS → audio + `timings.json` (format `[{id, start, end}]` giây). `timeline.ts` đã đọc sẵn.
-   Khi chưa có, thời lượng câu được ước lượng theo số từ.
-2. Skill `.claude/skills/tiktok-script/` — rút ra sau 3–5 video, khi đã biết hook nào hiệu quả.
-3. Agent `.claude/agents/tech-reviewer.md` — khi bắt đầu phải sửa lỗi kỹ thuật thường xuyên.
+1. Skill `.claude/skills/tiktok-script/` — rút ra sau 3–5 video, khi đã biết hook nào hiệu quả.
+2. Agent `.claude/agents/tech-reviewer.md` — khi bắt đầu phải sửa lỗi kỹ thuật thường xuyên.

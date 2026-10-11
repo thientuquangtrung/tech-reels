@@ -8,7 +8,9 @@
     "studio": "tsx scripts/sync.ts && remotion studio src/index.ts",
     "render": "tsx scripts/render.ts",
     "typecheck": "tsx scripts/sync.ts && tsc",
-    "check-idea": "tsx scripts/check-idea.ts"
+    "check-idea": "tsx scripts/check-idea.ts",
+    "voice": "tsx scripts/voice.ts",
+    "record": "tsx scripts/record.ts"
   },
   "author": "",
   "license": "ISC",

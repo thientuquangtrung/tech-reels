@@ -15,8 +15,8 @@ export type Timeline = {
   total: number;
 };
 
-const LEAD_S = 0.4; // khoảng lặng đầu video
-const GAP_S = 0.25; // nghỉ giữa hai câu (khi ước lượng)
+export const LEAD_S = 0.4; // khoảng lặng đầu video
+export const GAP_S = 0.25; // nghỉ giữa hai câu (ước lượng và voice.ts dùng chung)
 const OUTRO_S = 3; // thời gian hiện takeaway
 const STEP_DELAY = 6; // frame: hình bắt đầu sau khi câu thoại bắt đầu một chút
 const STAGGER = 10; // frame: nhiều target trong một step thì lần lượt từng cái

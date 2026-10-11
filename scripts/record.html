@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<title>Thu âm devdraw</title>
+<style>
+  :root { --ink: #1e1e1e; --muted: #8a8a8a; --paper: #faf8f3; --line: #e3dfd5; --rec: #e03131; --ok: #2f9e44; --warn: #e8590c; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--paper); color: var(--ink); font: 16px/1.45 system-ui, sans-serif; height: 100vh; display: flex; }
+  #left { padding: 20px; display: flex; align-items: center; justify-content: center; background: #ece8dd; }
+  [hidden] { display: none !important; }
+  video { width: min(45vw, (100vh - 40px) * 9 / 16); aspect-ratio: 9/16; background: #fff; border-radius: 10px; box-shadow: 0 2px 12px #0002; }
+  #novideo { width: min(45vw, (100vh - 40px) * 9 / 16); aspect-ratio: 9/16; display: grid; place-items: center; color: var(--muted); text-align: center; padding: 20px; border: 2px dashed var(--line); border-radius: 10px; }
+  #right { flex: 1; display: flex; flex-direction: column; padding: 24px 32px; min-width: 0; overflow-y: auto; }
+  #banner { background: #fff4e6; color: var(--warn); padding: 8px 12px; border-radius: 8px; margin-bottom: 12px; display: none; }
+  #meta { color: var(--muted); display: flex; flex-wrap: wrap; gap: 4px 16px; font-size: 14px; }
+  #prompter { flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 22px; }
+  .ctx { color: var(--muted); font-size: clamp(15px, 1.6vw, 20px); min-height: 1.45em; }
+  #cur { font-size: clamp(24px, 3.2vw, 44px); line-height: 1.3; font-weight: 600; }
+  #status { display: flex; align-items: center; gap: 14px; height: 40px; font-size: 18px; }
+  #dot { width: 14px; height: 14px; border-radius: 50%; background: var(--line); }
+  #dot.rec { background: var(--rec); animation: blink 1s infinite; }
+  @keyframes blink { 50% { opacity: .3; } }
+  #meter { position: relative; width: 200px; height: 10px; background: var(--line); border-radius: 4px; overflow: hidden; }
+  #meter::after { content: ""; position: absolute; left: 50%; top: 0; bottom: 0; width: 2px; background: var(--ink); opacity: .4; }
+  #meter div { height: 100%; width: 0; background: var(--ok); transition: width 60ms; }
+  #warn { background: #fff4e6; color: var(--warn); padding: 8px 12px; border-radius: 8px; font-size: 14px; margin-top: 6px; }
+  #keys { color: var(--muted); font-size: 14px; margin: 8px 0 14px; }
+  kbd { border: 1px solid var(--line); border-bottom-width: 2px; border-radius: 4px; padding: 0 5px; background: #fff; font-size: 13px; }
+  #list { display: flex; flex-wrap: wrap; gap: 6px; }
+  #list button { border: 1px solid var(--line); background: #fff; border-radius: 6px; padding: 4px 9px; cursor: pointer; font: inherit; font-size: 14px; }
+  #list button.done { color: var(--ok); border-color: #b2f2bb; }
+  #list button.cur { outline: 2px solid var(--ink); }
+</style>
+</head>
+<body>
+<div id="left"><video id="video" muted playsinline preload="auto"></video><div id="novideo" hidden>Chưa có out.mp4<br>npm run render -- NNN</div></div>
+<div id="right">
+  <div id="banner"></div>
+  <div id="meta"><span id="pos"></span><span id="scene"></span><span id="est"></span></div>
+  <div id="prompter">
+    <div class="ctx" id="prev"></div>
+    <div id="cur"></div>
+    <div class="ctx" id="next"></div>
+  </div>
+  <div id="status"><div id="dot"></div><span id="msg">Bấm Space để ghi câu này</span><div id="meter"><div></div></div></div>
+  <div id="warn" hidden></div>
+  <div id="keys"><kbd>Space</kbd> ghi / dừng &nbsp; <kbd>←</kbd><kbd>→</kbd> câu trước/sau &nbsp; <kbd>P</kbd> xem lại đoạn này (kèm giọng nếu đã ghi) &nbsp;·&nbsp; thanh mic nên vượt vạch giữa khi nói</div>
+  <div id="list"></div>
+</div>
+<script>
+const $ = (id) => document.getElementById(id);
+const video = $("video");
+let S = null, idx = 0, stopAt = Infinity, recorder = null, stream = null, analyser = null, recStart = 0, take = null;
+
+async function refresh() {
+  S = await (await fetch("/state")).json();
+  document.title = `Thu âm ${S.dir}`;
+  if (S.hasVideo) { if (!video.src) video.src = "/video"; } else { video.hidden = true; $("novideo").hidden = false; }
+  const warn = [];
+  if (S.videoStale) warn.push("out.mp4 cũ hơn script.json — hình có thể không khớp câu thoại, nên render lại.");
+  $("banner").textContent = warn.join(" ");
+  $("banner").style.display = warn.length ? "block" : "none";
+  renderList();
+}
+
+function renderList() {
+  $("list").innerHTML = "";
+  S.lines.forEach((l, i) => {
+    const b = document.createElement("button");
+    b.textContent = (l.recorded ? "✓ " : "") + l.id;
+    b.className = (l.recorded ? "done " : "") + (i === idx ? "cur" : "");
+    b.onclick = () => select(i);
+    $("list").appendChild(b);
+  });
+  const done = S.lines.filter((l) => l.recorded).length;
+  $("pos").textContent = `câu ${idx + 1}/${S.lines.length} · đã ghi ${done}/${S.lines.length}`;
+}
+
+function select(i, autoplay = true) {
+  if (recorder) return;
+  idx = Math.max(0, Math.min(S.lines.length - 1, i));
+  const l = S.lines[idx];
+  $("prev").textContent = S.lines[idx - 1]?.text ?? (idx === 0 ? `hook: ${S.hook}` : "");
+  $("cur").textContent = l.text;
+  $("next").textContent = S.lines[idx + 1]?.text ?? "— hết —";
+  $("scene").textContent = l.scene ? `scene: ${l.scene}` : "";
+  $("est").textContent = `hình: ${(l.to - l.from).toFixed(1)}s` + (l.seconds ? ` · giọng đã ghi: ${l.seconds.toFixed(1)}s` : "");
+  $("msg").textContent = l.recorded ? "Đã ghi. Space để ghi lại, P để nghe" : "Bấm Space để ghi câu này";
+  renderList();
+  if (autoplay) playSegment(false);
+}
+
+/** Phát đoạn hình của câu hiện tại; withVoice: phát kèm bản ghi đã lưu. */
+function playSegment(withVoice) {
+  stopTake();
+  const l = S.lines[idx];
+  if (S.hasVideo) {
+    video.currentTime = l.from;
+    stopAt = l.to;
+    video.play().catch(() => {});
+  }
+  if (withVoice && l.recorded) {
+    take = new Audio(`/take/${l.id}?t=${Date.now()}`);
+    take.play();
+  }
+}
+function stopTake() { if (take) { take.pause(); take = null; } }
+
+async function ensureMic() {
+  if (stream) return;
+  stream = await navigator.mediaDevices.getUserMedia({
+    audio: { echoCancellation: false, autoGainControl: false, noiseSuppression: true, channelCount: 1 },
+  });
+  const ctx = new AudioContext();
+  analyser = ctx.createAnalyser();
+  analyser.fftSize = 1024;
+  ctx.createMediaStreamSource(stream).connect(analyser);
+}
+
+async function toggleRecord() {
+  if (recorder) return recorder.stop();
+  try { await ensureMic(); } catch (e) { $("msg").textContent = "Không mở được micro: " + e.message; return; }
+  stopTake();
+  const mime = MediaRecorder.isTypeSupported("audio/webm;codecs=opus") ? "audio/webm;codecs=opus" : "audio/mp4";
+  const ext = mime.startsWith("audio/webm") ? "webm" : "mp4";
+  const chunks = [];
+  const l = S.lines[idx];
+  recorder = new MediaRecorder(stream, { mimeType: mime });
+  recorder.ondataavailable = (e) => chunks.push(e.data);
+  recorder.onstop = async () => {
+    recorder = null;
+    $("dot").className = "";
+    video.pause();
+    $("msg").textContent = "Đang lưu…";
+    const res = await fetch(`/take/${l.id}?ext=${ext}`, { method: "POST", body: new Blob(chunks, { type: mime }) });
+    const data = await res.json();
+    if (!res.ok) { $("msg").textContent = "Không lưu được — Space để ghi lại"; $("warn").textContent = data.error; $("warn").hidden = false; return; }
+    await refresh();
+    select(idx, false);
+    $("msg").textContent = `Đã lưu ${data.seconds.toFixed(1)}s — đang phát lại. → câu tiếp, Space ghi lại`;
+    $("warn").textContent = data.warn ?? "";
+    $("warn").hidden = !data.warn;
+    playSegment(true);
+  };
+  $("warn").hidden = true;
+  recorder.start();
+  recStart = performance.now();
+  $("dot").className = "rec";
+  if (S.hasVideo) { video.currentTime = l.from; stopAt = l.to; video.play().catch(() => {}); }
+}
+
+function tick() {
+  if (!video.paused && video.currentTime >= stopAt) video.pause(); // giữ khung cuối của đoạn
+  if (analyser) {
+    const buf = new Float32Array(analyser.fftSize);
+    analyser.getFloatTimeDomainData(buf);
+    const rms = Math.sqrt(buf.reduce((s, x) => s + x * x, 0) / buf.length);
+    const db = 20 * Math.log10(rms + 1e-9);
+    // thang -60dB → 0dB; nói bình thường nên lên quá vạch (-30dB)
+    const bar = $("meter").firstElementChild;
+    bar.style.width = Math.max(0, Math.min(100, ((db + 60) / 60) * 100)) + "%";
+    bar.style.background = db > -30 ? "var(--ok)" : "var(--warn)";
+  }
+  if (recorder) $("msg").textContent = `Đang ghi ${((performance.now() - recStart) / 1000).toFixed(1)}s — Space để dừng`;
+  requestAnimationFrame(tick);
+}
+
+document.addEventListener("keydown", (e) => {
+  if (e.repeat) return;
+  if (e.code === "Space") { e.preventDefault(); toggleRecord(); }
+  else if (e.code === "ArrowRight" || e.code === "Enter") select(idx + 1);
+  else if (e.code === "ArrowLeft") select(idx - 1);
+  else if (e.code === "KeyP") playSegment(true);
+});
+
+refresh().then(() => {
+  const first = S.lines.findIndex((l) => !l.recorded);
+  select(first < 0 ? 0 : first, false);
+  if (S.hasVideo) video.addEventListener("loadedmetadata", () => { video.currentTime = S.lines[idx].from; }, { once: true });
+  tick();
+});
+</script>
+</body>
+</html>

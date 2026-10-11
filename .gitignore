@@ -2,5 +2,7 @@ node_modules/
 out/
 videos/*/out.mp4
 videos/*/still-*.png
-videos/*/audio.mp3
+.env
+.env.local
 src/videos.generated.ts
+videos/*/voice-raw/
