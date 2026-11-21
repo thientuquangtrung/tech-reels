@@ -6,3 +6,4 @@ videos/*/still-*.png
 .env.local
 src/videos.generated.ts
 videos/*/voice-raw/
+.DS_Store

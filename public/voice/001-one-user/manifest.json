@@ -1,0 +1,34 @@
+{
+  "voiceId": "self",
+  "modelId": "recorded",
+  "lines": {
+    "s1": {
+      "text": "Bạn chạy load test 1000 virtual user. Nhưng một virtual user thực ra là cái gì?",
+      "seconds": 5.093878
+    },
+    "s2": {
+      "text": "Nó phải giống một người thật: có tài khoản riêng và token đăng nhập riêng.",
+      "seconds": 4.440816
+    },
+    "s3": {
+      "text": "Việc đầu tiên: mở feed.",
+      "seconds": 4.022857
+    },
+    "s4": {
+      "text": "Rồi đọc vài giây, bấm vào một bài, lại đọc tiếp.",
+      "seconds": 4.806531
+    },
+    "s7": {
+      "text": "Bỏ thời gian chờ đi là bạn đang test một con bot, không phải người dùng.",
+      "seconds": 0.600816
+    },
+    "s6": {
+      "text": "Nghỉ một lúc, rồi lặp lại từ đầu.",
+      "seconds": 1.227755
+    },
+    "s5": {
+      "text": "Chỉ mười lăm phần trăm vòng lặp là bấm like, và hai phần trăm là viết bài.",
+      "seconds": 1.567347
+    }
+  }
+}
