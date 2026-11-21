@@ -1,12 +1,18 @@
 ---
 name: idea-intake
-description: Biến nguyên liệu thô (link, file PDF/ảnh/slide, đoạn mô tả của người dùng) thành videos/NNN-slug/idea.md có cấu trúc cho kênh devdraw. Dùng khi người dùng dán link, đính kèm tài liệu hoặc kể một ý tưởng và muốn "lên idea", "làm video về cái này", "lưu ý tưởng này". Không dùng để viết script.json.
+description: Biến nguyên liệu thô (link, file PDF/ảnh/slide, đoạn mô tả của người dùng) thành video/videos/NNN-slug/idea.md có cấu trúc cho kênh video devdraw. Dùng khi người dùng dán link, đính kèm tài liệu, chọn một mục trong ideas/inbox.md hoặc kể một ý tưởng và muốn "lên idea video", "làm video về cái này". Chỉ muốn lưu ý tưởng lại → dùng capture. Không dùng để viết script.json.
 ---
 
 # idea-intake
 
-Đầu vào: bất cứ thứ gì người dùng đưa. Đầu ra: **một** `videos/NNN-slug/idea.md` hợp lệ,
-và các góc không chọn được nối vào `backlog.md`.
+Đầu vào: bất cứ thứ gì người dùng đưa, hoặc một mục trong `ideas/inbox.md`.
+Đầu ra: **một** `video/videos/NNN-slug/idea.md` hợp lệ, và các góc không chọn được nối vào `ideas/inbox.md`.
+
+Đường dẫn trong skill tính từ gốc repo; lệnh `npm run` chạy ở gốc (proxy sang `video/`).
+
+Người dùng hỏi chung chung ("làm video gì tiếp") → đọc `ideas/inbox.md`, liệt kê tối đa 3 mục
+`RAW` có `Kênh` là `video`, `cả hai` hoặc `?` (cộng mục `PASSED` kênh `cả hai` mà `Đã thành` chưa có video)
+và để người dùng chọn. Mục được chọn là một nguồn: các trường `Bối cảnh` / `Quyết định` / `Vì sao` thuộc "Góc của tôi".
 
 Việc của skill này là **thu hẹp**: một nguồn có thể chứa 5 ý, một video chỉ nói 1 ý.
 
@@ -43,22 +49,26 @@ Chọn series/layout theo hình dạng nội dung:
 | Một con số / kết quả ngược trực giác | `counterintuitive` | `stack` |
 | Hành trình tự học của người dùng | `learn_public` | tuỳ nội dung |
 
-Layout đã dựng nằm trong `src/layouts/rules.ts`. Góc dùng layout chưa dựng vẫn đề xuất được,
+Layout đã dựng nằm trong `video/src/layouts/rules.ts`. Góc dùng layout chưa dựng vẫn đề xuất được,
 nhưng phải nói rõ "cần dựng layout X trước".
 
 Hỏi người dùng chọn góc nào. Họ không có mặt để trả lời → lấy góc có layout đã dựng, ghi lý do ở đầu câu trả lời.
 
 ### 4. Ghi idea.md
 
-- Số thứ tự: lấy số lớn nhất trong `videos/` + 1, ba chữ số. Slug: tiếng Anh, ngắn, gạch nối.
+- Số thứ tự: lấy số lớn nhất trong `video/videos/` + 1, ba chữ số. Slug: tiếng Anh, ngắn, gạch nối.
 - Copy khung từ `template.md` cùng thư mục, điền vào, xoá các comment hướng dẫn.
 - `status: draft`. Chỉ người dùng mới chuyển sang `approved`.
 
 ### 5. Kiểm và dọn
 
 - Chạy `npm run check-idea -- NNN`. Có lỗi → sửa idea.md, chạy lại đến khi pass.
-  Không sửa `scripts/check-idea.ts` để cho qua.
-- Nối các góc không được chọn vào `backlog.md`, đúng mục series, dạng `- series — chủ đề (từ: nguồn)`.
+  Không sửa `video/scripts/check-idea.ts` để cho qua.
+- Ý lấy từ inbox → trong inbox đổi `[RAW]` thành `[PASSED]` và thêm (hoặc nối vào) dòng
+  `- **Đã thành:** video/videos/NNN-slug`.
+- Nối các góc không được chọn vào cuối `ideas/inbox.md`, mỗi góc một mục `[RAW]` ngắn:
+  tiêu đề là chủ đề, `- **Kênh:** video (<series>, layout: <layout>)`, `- **Nguồn:** <nguồn>`.
+  Các trường khác không biết thì bỏ, đừng điền `?` cho đủ.
 - Báo lại người dùng: góc đã chọn, các lưu ý (`!`) từ check-idea, và danh sách "Cần kiểm".
 
 ## Luật

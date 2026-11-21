@@ -1,0 +1,42 @@
+{
+  // Isolated dev environment: npm install scripts, the dev server and
+  // in-container VS Code extensions only see this project folder —
+  // not ~/.ssh, ~/.aws, the macOS Keychain or the host gh login.
+  // Generated from mvp-toolkit/templates/devcontainer by `scripts/dc init`.
+  "name": "projects-devlog",
+  "build": { "dockerfile": "Dockerfile" },
+
+  "workspaceFolder": "/workspaces/app",
+  "workspaceMount": "source=${localWorkspaceFolder},target=/workspaces/app,type=bind",
+
+  // Linux node_modules (only video/ has dependencies) and Remotion's downloaded
+  // Chrome Headless Shell (inside node_modules/.remotion) live in a volume, never on the host.
+  // .git is read-only: otherwise code in here could plant a hook or
+  // core.fsmonitor that runs on the Mac the next time host git touches the repo.
+  // Commit and push from the host.
+  "mounts": [
+    "source=${devcontainerId}-video-node_modules,target=/workspaces/app/video/node_modules,type=volume",
+    "source=${localWorkspaceFolder}/.git,target=/workspaces/app/.git,type=bind,readonly"
+  ],
+
+  "containerUser": "node",
+  "remoteUser": "node",
+  "runArgs": ["--cap-drop=ALL", "--security-opt=no-new-privileges"],
+
+  // Only reachable from this Mac, not from the LAN.
+  // 3000 = Remotion Studio (host 3010), 3123 = voice recording page (open it in the host browser for the mic).
+  "appPort": ["127.0.0.1:3010:3000", "127.0.0.1:3123:3123"],
+  "forwardPorts": [3000, 3123],
+
+  "postCreateCommand": "git config --global --add safe.directory /workspaces/app && npm ci --prefix video",
+
+  // Host services reachable on the container's localhost (set by `scripts/dc init --host-ports`).
+  // Each forwarded port is a deliberate hole in the isolation — keep the list short.
+  "postStartCommand": "true",
+
+  "customizations": {
+    "vscode": {
+      "extensions": ["dbaeumer.vscode-eslint"]
+    }
+  }
+}

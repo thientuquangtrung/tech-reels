@@ -1,9 +1,11 @@
 node_modules/
-out/
-videos/*/out.mp4
-videos/*/still-*.png
+.DS_Store
 .env
 .env.local
-src/videos.generated.ts
-videos/*/voice-raw/
-.DS_Store
+
+# video/
+video/out/
+video/src/videos.generated.ts
+video/videos/*/out.mp4
+video/videos/*/still-*.png
+video/videos/*/voice-raw/

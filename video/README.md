@@ -1,11 +1,10 @@
 # devdraw
 
 Video TikTok dọc 30–60s, sơ đồ kiểu vẽ tay, sinh từ JSON bằng Remotion.
-Luật viết script và cấu trúc repo cho Claude: xem `CLAUDE.md`.
+Luật viết script cho Claude: xem `CLAUDE.md`. Repo gốc (blog + video): `../CLAUDE.md`.
 
-```bash
-npm install
-```
+Code chạy trong devcontainer, `npm ci` tự chạy lúc tạo container. Lệnh dưới đây chạy ở gốc repo hoặc trong `video/` đều được;
+từ máy host thì bọc qua mvp-toolkit: `scripts/dc projects/devlog npm run …`.
 
 Lần render đầu Remotion tự tải Chrome Headless Shell (~100MB).
 
@@ -14,7 +13,7 @@ Lần render đầu Remotion tự tải Chrome Headless Shell (~100MB).
 ✋ = bạn · 🤖 = Claude · phần còn lại code tự kiểm/tính.
 
 ### 1. Ý tưởng
-- ✋ Đưa nguyên liệu (link, file, ảnh, mô tả) hoặc chọn một dòng trong `backlog.md`.
+- ✋ Đưa nguyên liệu (link, file, ảnh, mô tả) hoặc chọn một mục `Kênh: video` trong `../ideas/inbox.md`.
 - 🤖 Skill `idea-intake` viết `videos/NNN-slug/idea.md`: một ý duy nhất, điểm mấu chốt có nguồn, hook ứng viên, mục cần kiểm.
 - 🤖 `npm run check-idea -- NNN` đến khi pass.
 - ✋ Duyệt, xử lý các mục "cần kiểm", đổi **`status: approved`**.
@@ -41,7 +40,7 @@ npm run render -- NNN                      # → out.mp4 chưa tiếng, timing �
   ```bash
   npm run record -- NNN
   ```
-  Vào http://localhost:3123. Mỗi câu thoại hiện kèm đoạn video tương ứng.
+  Vào http://127.0.0.1:3123. Mỗi câu thoại hiện kèm đoạn video tương ứng.
   - **Space**: ghi / dừng. Ghi xong tự phát lại kèm hình.
   - **→ / ←**: câu sau / trước. **P**: xem lại đoạn này.
   - Thanh mic nên vượt vạch giữa khi nói. Có cảnh báo thì xem lại mic rồi thu lại câu đó.

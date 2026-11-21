@@ -1,6 +1,6 @@
 # Kế hoạch gộp devdraw + blog-system thành một repo
 
-> Trạng thái: **đề xuất**, chưa làm. Ngày: 2026-11-21.
+> Trạng thái: **đã làm** 2026-11-21. Quyết định: tên `devlog`; chưa tính nơi đăng blog; bật hết skill ngay.
 
 ## 1. Vì sao gộp
 
