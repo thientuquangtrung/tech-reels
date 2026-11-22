@@ -3,7 +3,7 @@
  * blog.js — CLI deterministic cho blog workspace.
  *
  * Nguyên tắc: mọi thứ đếm được / chuyển được / kiểm được bằng regex đều nằm ở đây,
- * không nằm trong model. Không phụ thuộc package ngoài.
+ * không nằm trong model. Không phụ thuộc package ngoài (riêng `diagrams` gọi mermaid-cli qua npx).
  */
 
 const fs = require("fs");
@@ -277,8 +277,78 @@ function cmdImages(slug) {
     if (["TODO", "NEEDS_CAPTURE"].includes(i.status)) console.log(c("yellow", `  ⚠ ${i.id}: status ${i.status}`));
   }
 
+  // Sơ đồ mermaid cần bản PNG cho nền tảng không render Mermaid (`blog.js diagrams`).
+  for (const [file, lang] of [["index.vi.md", "vi"], ["index.en.md", "en"]]) {
+    const mdPath = path.join(dir, file);
+    const md = readIf(mdPath);
+    if (!md) continue;
+    for (const b of mermaidBlocks(md)) {
+      const png = path.join(dir, diagramPng(b.id, lang));
+      if (!fs.existsSync(png)) console.log(c("yellow", `  ⚠ ${b.id}: chưa có ${diagramPng(b.id, lang)} — chạy blog.js diagrams ${slug}`));
+      else if (fs.statSync(png).mtimeMs < fs.statSync(mdPath).mtimeMs) console.log(c("yellow", `  ⚠ ${b.id}: ${diagramPng(b.id, lang)} cũ hơn ${file} — chạy lại diagrams nếu sơ đồ đã đổi`));
+    }
+  }
+
   console.log(problems ? c("red", `\n  ${problems} lỗi cần sửa\n`) : c("green", "\n  ✓ Manifest khớp bài\n"));
   if (problems) process.exitCode = 1;
+}
+
+/* ------------------------------------------------------- cmd: diagrams -- */
+
+/** Khối mermaid đứng ngay sau marker: <!-- IMG: id --> rồi ```mermaid … ``` */
+function mermaidBlocks(md) {
+  return [...md.matchAll(/<!--\s*IMG:\s*(\S+?)\s*-->\s*\r?\n```mermaid\r?\n([\s\S]*?)\r?\n```/g)]
+    .map(m => ({ id: m[1], code: m[2] }));
+}
+
+/** PNG của sơ đồ: <id>.png cho bản VI, <id>.en.png cho bản EN. */
+const diagramPng = (id, lang) => (lang === "en" ? `${id}.en.png` : `${id}.png`);
+
+/** Chrome headless shell mà Remotion đã tải (npx remotion browser ensure), hoặc CHROME_PATH. */
+function findChrome() {
+  if (process.env.CHROME_PATH) return process.env.CHROME_PATH;
+  const base = path.resolve(ROOT, "..", "video", "node_modules", ".remotion", "chrome-headless-shell");
+  if (!fs.existsSync(base)) return null;
+  const dirs = (p) => fs.readdirSync(p, { withFileTypes: true }).filter(e => e.isDirectory()).map(e => e.name);
+  for (const plat of dirs(base)) {
+    for (const sub of dirs(path.join(base, plat))) {
+      for (const bin of ["headless_shell", "chrome-headless-shell"]) {
+        const p = path.join(base, plat, sub, bin);
+        if (fs.existsSync(p)) return p;
+      }
+    }
+  }
+  return null;
+}
+
+function cmdDiagrams(slug) {
+  const { dir } = findSlug(slug);
+  const { execFileSync } = require("child_process");
+  const os = require("os");
+
+  const jobs = [];
+  for (const [file, lang] of [["index.vi.md", "vi"], ["index.en.md", "en"]]) {
+    const md = readIf(path.join(dir, file));
+    if (md) for (const b of mermaidBlocks(md)) jobs.push({ ...b, lang, out: diagramPng(b.id, lang) });
+  }
+  console.log(c("bold", `\nDiagrams: ${slug}`));
+  if (!jobs.length) { console.log(c("dim", "  Không có khối mermaid nào đứng sau marker IMG.\n")); return; }
+
+  const chrome = findChrome();
+  if (!chrome) die("Chưa có Chrome headless. Chạy: npm --prefix video exec remotion browser ensure (hoặc đặt CHROME_PATH)");
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "blog-diagrams-"));
+  const pp = path.join(tmp, "puppeteer.json");
+  fs.writeFileSync(pp, JSON.stringify({ executablePath: chrome, args: ["--no-sandbox"] }));
+
+  for (const j of jobs) {
+    const input = path.join(tmp, `${j.id}.${j.lang}.mmd`);
+    fs.writeFileSync(input, j.code);
+    execFileSync("npx", ["-y", "@mermaid-js/mermaid-cli@11", "-i", input, "-o", path.join(dir, j.out), "-p", pp, "-s", "2", "-b", "white", "-q"],
+      { stdio: ["ignore", "ignore", "inherit"], env: { ...process.env, PUPPETEER_SKIP_DOWNLOAD: "1" } });
+    console.log(c("green", `  ✓ ${j.out}`) + c("dim", `  (${j.lang.toUpperCase()}, ${j.id})`));
+  }
+  fs.rmSync(tmp, { recursive: true, force: true });
+  console.log(c("dim", "\n  Nền tảng không render Mermaid: thay khối ```mermaid bằng ![alt](<file>.png) khi đăng.\n"));
 }
 
 /* ---------------------------------------------------------- cmd: links -- */
@@ -437,7 +507,8 @@ blog.js — CLI cho blog workspace
   status              bảng trạng thái mọi bài
   stats <slug>        số chữ, thời gian đọc, ảnh, placeholder
   images <slug>       đối chiếu marker trong bài ↔ manifest
-  links <slug>        liệt kê link, cảnh báo link nội bộ
+  diagrams <slug>     render sơ đồ mermaid → <id>.png / <id>.en.png (chạy trong devcontainer)
+  links <slug>       liệt kê link, cảnh báo link nội bộ
   check <slug>        quét rò rỉ + placeholder + metadata
   publish <slug>      drafts/ → published/, đóng dấu ngày
 `;
@@ -447,6 +518,7 @@ switch (cmd) {
   case "status":  cmdStatus(); break;
   case "stats":   cmdStats(args[0] || die("Cần <slug>")); break;
   case "images":  cmdImages(args[0] || die("Cần <slug>")); break;
+  case "diagrams": cmdDiagrams(args[0] || die("Cần <slug>")); break;
   case "links":   cmdLinks(args[0] || die("Cần <slug>")); break;
   case "check":   cmdCheck(args[0] || die("Cần <slug>")); break;
   case "publish": cmdPublish(args[0] || die("Cần <slug>")); break;

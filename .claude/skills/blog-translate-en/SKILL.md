@@ -92,7 +92,8 @@ tags: [<tag EN tương ứng>]
 - Marker ảnh `<!-- IMG: img-NN -->` **giữ nguyên vị trí và id** — hai bản dùng chung ảnh.
 - `alt` text thì phải viết lại bằng tiếng Anh. Thêm vào `images.md` trường `alt_en`
   cho mỗi ảnh, không sửa `alt` gốc.
-- Mermaid diagram: dịch nhãn trong sơ đồ sang tiếng Anh, tạo bản riêng cho `index.en.md`.
+- Mermaid diagram: dịch nhãn trong sơ đồ sang tiếng Anh, tạo bản riêng cho `index.en.md`, rồi chạy
+  `node blog/bin/blog.js diagrams <slug>` để sinh `<id>.en.png`.
 - Caption dịch, nhưng `capture_note` là ghi chú nội bộ nên giữ nguyên tiếng Việt.
 
 ### Bước 5 — Tự soát

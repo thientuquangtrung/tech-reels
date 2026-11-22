@@ -89,6 +89,9 @@ thật để thay không. Câu nào đọc như kết quả thật của tác gi
 - mọi marker trong bài có mục tương ứng trong manifest, và ngược lại
 - mọi ảnh có `alt` không rỗng
 - không còn `status: TODO` hoặc `NEEDS_CAPTURE` → `BLOCKING`
+- sơ đồ Mermaid thiếu PNG hoặc PNG cũ hơn bài (`images` cảnh báo) → `SUGGESTION`: chạy
+  `node blog/bin/blog.js diagrams <slug>`. Nhắc tác giả: nền tảng không render Mermaid thì thay khối
+  mermaid bằng ảnh PNG khi đăng.
 
 **Link** — chạy `node blog/bin/blog.js links <slug>`:
 - link nội bộ (localhost, IP riêng, domain công ty) → `BLOCKING`

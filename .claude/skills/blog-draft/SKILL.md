@@ -173,6 +173,11 @@ Chỉ đặt marker gọn, không nhúng spec:
 ### Đối chiếu
 
 Chạy `node blog/bin/blog.js images <slug>` để kiểm marker trong bài khớp manifest.
+
+Bài có `DIAGRAM` dạng Mermaid → chạy `node blog/bin/blog.js diagrams <slug>` (trong devcontainer) để có
+thêm bản PNG `<id>.png` cạnh bài. Tác giả dùng PNG thay khối mermaid khi đăng lên nền tảng không render
+Mermaid. Sửa sơ đồ thì chạy lại — `images` sẽ cảnh báo khi PNG cũ hơn bài.
+Lần đầu trong container cần Chrome headless: `npm --prefix video exec remotion browser ensure`.
 Lệch thì sửa, đừng bỏ qua — marker mồ côi sẽ lộ ra trong bản đăng.
 
 ---

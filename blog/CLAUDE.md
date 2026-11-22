@@ -59,6 +59,7 @@ node blog/bin/blog.js new "<tiêu đề>"   # slugify + scaffold thư mục draf
 node blog/bin/blog.js status            # bảng trạng thái mọi bài
 node blog/bin/blog.js stats <slug>      # số chữ, thời gian đọc, số ảnh
 node blog/bin/blog.js images <slug>     # đối chiếu marker trong bài ↔ manifest
+node blog/bin/blog.js diagrams <slug>   # mermaid → <id>.png / <id>.en.png (cho nền tảng không render Mermaid)
 node blog/bin/blog.js links <slug>      # liệt kê link, cảnh báo link nội bộ
 node blog/bin/blog.js check <slug>      # quét rò rỉ + placeholder còn sót
 node blog/bin/blog.js publish <slug>    # drafts/ → published/, đóng dấu ngày
