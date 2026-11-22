@@ -79,7 +79,11 @@ Hỏi người dùng chọn góc nào. Họ không có mặt để trả lời �
    Toàn bộ ý tưởng đến từ đúng một nguồn → nhắc người dùng tìm góc riêng hoặc nguồn thứ hai.
 3. **Không bịa "Góc của tôi".** Chỉ ghi điều người dùng đã nói trong cuộc trò chuyện. Không có thì để trống
    và hỏi một câu: "Bạn từng gặp chuyện này ở đâu chưa?"
-4. **Một idea = một ý.** "Một ý duy nhất" ≤ 160 ký tự. Muốn nói hai ý → hai idea.
+4. **Số liệu: thật trước, minh hoạ sau** (`CLAUDE.md` gốc mục 2). Số kịch bản để người xem hình dung
+   ("1000 virtual user", "bảng 500 row") không cần nguồn — chọn số gây ấn tượng nhưng hợp lý, dùng trong
+   hook và script (không ghi vào "Góc của tôi" — mục đó chỉ chứa lời người dùng). Số nói về hành vi thật của công cụ ("mặc định 500 record mỗi lần poll") là
+   sự thật kỹ thuật → cần `[nguồn N]` như mọi điểm mấu chốt.
+5. **Một idea = một ý.** "Một ý duy nhất" ≤ 160 ký tự. Muốn nói hai ý → hai idea.
 
 ## Ví dụ ngắn
 

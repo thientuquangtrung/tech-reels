@@ -12,8 +12,16 @@ Người đọc/xem chung: dev Việt Nam, đang làm hệ thống chạy thật
 1. **Model suy luận, code đếm.** Đếm chữ, slugify, kiểm layout, tính thời lượng, quét rò rỉ — đều là việc của CLI
    (`node blog/bin/blog.js`, `npm run validate`, `npm run check-idea`…). Không tự làm phần việc của CLI,
    không sửa luật/schema để nội dung "lọt" — luật sai thì báo người dùng.
-2. **Không bịa sự kiện.** Blog: thiếu số liệu thì `[CẦN SỐ LIỆU]`. Video: sự thật kỹ thuật phải có `[nguồn N]`,
-   chưa có nguồn thì vào "Cần kiểm".
+2. **Số liệu: thật trước, minh hoạ sau.**
+   - Có số thật (tác giả đưa, nguồn có) → dùng đúng số đó.
+   - Chưa có → được tự đặt **số minh hoạ**, chọn con số gây ấn tượng nhưng hợp lý về kỹ thuật
+     (cùng bậc độ lớn với thực tế). Câu văn phải đọc ra là kịch bản: "giả sử…", "một bảng 500 row…",
+     "bạn chạy 1000 virtual user…" — không gắn với "team mình đo được", "production của mình".
+   - **Không** biến số tự đặt thành kết quả thật của tác giả hay của một công cụ. Muốn câu dạng
+     "mình giảm từ 4s xuống 300ms" thì cần số thật; không có thì viết lại thành kịch bản minh hoạ.
+   - Sự thật kỹ thuật (thư viện làm gì, mặc định bao nhiêu) không phải số minh hoạ: video cần `[nguồn N]`,
+     blog cần tác giả xác nhận hoặc nguồn.
+   - Blog: đánh dấu số minh hoạ bằng `<!-- minh hoạ -->` cuối dòng để `blog.js check` liệt kê cho tác giả soát.
 3. **Không tự động sang bước sau.** Mỗi skill dừng ở đầu ra của mình và hỏi. Không tự `publish`, không tự `voice --go`.
 4. **`voice.md` là nguồn chuẩn về giọng.** Bảng đầu file ghi kênh nào đọc mục nào. Số mục cố định, đừng đánh số lại.
 

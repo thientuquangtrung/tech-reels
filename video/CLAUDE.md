@@ -42,6 +42,9 @@ Schema: `schema/schema.ts`. Ví dụ chuẩn: `videos/001-one-user/script.json`.
 - `hook` ≤ 10 từ, hiện to giữa màn hình trong câu thoại đầu. Đó là lý do câu `s1` thường không vẽ gì.
 - `takeaway`: một câu chốt hiện ở cuối.
 - Chữ trên hình phải ngắn (label ≤ 22 ký tự) — xem trên điện thoại.
+- Số liệu: dùng số thật trong `idea.md` nếu có; không có thì đặt số minh hoạ gây ấn tượng nhưng hợp lý,
+  nói như một kịch bản ("Bạn chạy load test 1000 virtual user…"), không nói như kết quả đã đo.
+  Luật đầy đủ: `../CLAUDE.md` mục 2.
 
 ### Layout đã dựng
 

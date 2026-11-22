@@ -8,9 +8,10 @@ Kho blog cá nhân. Ngôn ngữ mặc định: **tiếng Việt**. Bản tiếng
 1. **Deterministic ra CLI, phán đoán ra skill.** Mọi thứ đếm được, chuyển được,
    kiểm được bằng regex thì gọi `bin/blog.js`. Không tự đếm chữ, không tự tính
    reading time, không tự slugify.
-2. **Không bịa sự kiện.** Blog này viết về công việc có thật. Số liệu, thông báo lỗi,
-   tên hàm, kết quả — nếu không có trong input của tác giả thì để `[CẦN SỐ LIỆU]`,
-   tuyệt đối không điền cho mượt.
+2. **Số liệu: thật trước, minh hoạ sau** (luật đầy đủ ở `../CLAUDE.md` mục 2). Có số thật thì dùng.
+   Chưa có thì đặt số minh hoạ hấp dẫn nhưng hợp lý, viết thành kịch bản ("giả sử…") và gắn
+   `<!-- minh hoạ -->` cuối dòng. Không biến số tự đặt thành kết quả tác giả đã đo.
+   Thông báo lỗi, tên hàm, tên file thật vẫn phải đến từ tác giả.
 3. **Không tự động sang bước sau.** Mỗi skill dừng đúng ở đầu ra của mình và hỏi.
    Capture xong không viết bài. Draft xong không tự review. Review xong không tự đăng.
 4. **`voice.md` là nguồn chuẩn về giọng văn.** Skill nào sinh hoặc sửa câu chữ tiếng

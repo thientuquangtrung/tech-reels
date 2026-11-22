@@ -82,6 +82,9 @@ BLOCKING — rò rỉ
 
 **Placeholder** — `[CẦN SỐ LIỆU]`, `[TODO]`, `XXX`, `???`, `lorem` → `BLOCKING`.
 
+**Số minh hoạ** — `check` liệt kê các dòng `<!-- minh hoạ -->`. Đưa danh sách cho tác giả, hỏi có số
+thật để thay không. Câu nào đọc như kết quả thật của tác giả mà số là tự đặt → `BLOCKING`.
+
 **Ảnh** — chạy `node blog/bin/blog.js images <slug>`:
 - mọi marker trong bài có mục tương ứng trong manifest, và ngược lại
 - mọi ảnh có `alt` không rỗng

@@ -52,6 +52,8 @@ Với mỗi đoạn, hỏi: bỏ nó đi thì bài mất gì? Không trả lời
 **1.5 — Placeholder còn sót không?**
 Quét `[CẦN SỐ LIỆU]`, `[TODO]`, `[?]`, `XXX`. Còn một cái → `BLOCKING`.
 Chạy `node blog/bin/blog.js check <slug>` để quét bằng máy, đừng soi bằng mắt.
+Dòng `<!-- minh hoạ -->` không phải placeholder, nhưng soát từng dòng: câu có đọc ra là kịch bản
+không, số có hợp lý về kỹ thuật không? Đọc như kết quả thật của tác giả → `BLOCKING`.
 
 **1.6 — Kết bài có nói điều mới không?**
 Kết bài chỉ tóm tắt lại bài là kết bài lãng phí. Phải nói người đọc làm gì khác đi.
@@ -91,7 +93,7 @@ BLOCKING (3) — phải xử lý trước khi đăng
 
 SUGGESTION (4) — nên sửa, không chặn
   [S1] §2 — đoạn 7 câu, ngắt sau câu "..." thì dễ thở hơn.
-  [S2] §3 — "được thiết kế bởi" → "tôi thiết kế".
+  [S2] §3 — "được thiết kế bởi" → "mình thiết kế".
   ...
 ```
 

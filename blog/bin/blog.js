@@ -233,6 +233,8 @@ function cmdStats(slug) {
   if (pending.length) console.log(c("yellow", `       ${pending.length} chưa xong: ${pending.map(i => i.id).join(", ")}`));
 
   const holes = vi.match(/\[CẦN SỐ LIỆU[^\]]*\]|\[TODO\]|\[\?\]|XXX/g) || [];
+  const illus = vi.split(/\r?\n/).filter(l => ILLUSTRATIVE.test(l)).length;
+  if (illus) console.log(c("yellow", `  Số minh hoạ: ${illus} dòng (thay bằng số thật nếu có)`));
   if (holes.length) console.log(c("yellow", `  Placeholder còn sót: ${holes.length}`));
   else console.log(c("green", "  Placeholder: sạch"));
 
@@ -326,6 +328,9 @@ const HOLE_PATTERNS = [
   { re: /\blorem ipsum\b/gi,       label: "Lorem ipsum" },
 ];
 
+/** Số minh hoạ do skill tự đặt — không blocking, nhưng tác giả phải soát trước khi đăng. */
+const ILLUSTRATIVE = /<!--\s*minh\s+h(?:oạ|ọa)\s*-->/i;
+
 function scanFile(md, patterns) {
   const lines = md.split(/\r?\n/);
   const hits = [];
@@ -367,6 +372,14 @@ function cmdCheck(slug) {
     if (!fm.description) console.log(c("yellow", `  [META]  ${f}  thiếu description`));
     else if (fm.description.length > 160) console.log(c("yellow", `  [META]  ${f}  description ${fm.description.length} ký tự (>160)`));
     if (!fm.tags || fm.tags === "[]") console.log(c("yellow", `  [META]  ${f}  chưa có tags`));
+  }
+
+  for (const f of ["index.vi.md", "index.en.md"]) {
+    const md = readIf(path.join(dir, f));
+    if (!md) continue;
+    md.split(/\r?\n/).forEach((line, idx) => {
+      if (ILLUSTRATIVE.test(line)) console.log(c("yellow", `  [MINH HOẠ] ${f}:${idx + 1}`) + c("dim", `  → ${line.replace(ILLUSTRATIVE, "").trim().slice(0, 90)}`));
+    });
   }
 
   const imgs = parseImages(readIf(path.join(dir, "images.md")));

@@ -9,12 +9,15 @@ Viết bản nháp tiếng Việt và lập kế hoạch ảnh. Đầu ra: `inde
 
 ## Nguyên tắc chi phối
 
-Tác giả cung cấp **dữ kiện**, skill lo **câu chữ**. Ranh giới này quan trọng: nếu skill
-tự bịa dữ kiện, bài mất giá trị duy nhất mà nó có — tính xác thực. Nếu skill hỏi tác giả
-từng câu văn, nó vô dụng.
+Tác giả cung cấp **dữ kiện**, skill lo **câu chữ**. Nếu skill hỏi tác giả từng câu văn, nó vô dụng.
 
-Cụ thể: mọi số liệu, thông báo lỗi, tên hàm, tên file, kết quả đo, mốc thời gian đều
-phải đến từ tác giả. Skill không suy ra, không ước lượng, không viết "khoảng 30%" cho mượt.
+Cụ thể:
+- Thông báo lỗi, tên hàm, tên file, kết quả đo thật, mốc thời gian → phải đến từ tác giả.
+- Số liệu → thật trước, minh hoạ sau (`CLAUDE.md` gốc repo, mục 2). Hỏi số thật trong FACT-GAP;
+  tác giả không có thì đặt số minh hoạ gây ấn tượng nhưng hợp lý, viết câu thành kịch bản
+  ("giả sử bảng có 500 row…") và gắn `<!-- minh hoạ -->` cuối dòng.
+- Không viết số tự đặt thành kết quả của tác giả ("team mình giảm 70%…"). Không viết "đáng kể",
+  "khoảng 30%" mơ hồ — hoặc số thật, hoặc kịch bản minh hoạ có số cụ thể.
 
 ## Chuẩn bị
 
@@ -24,8 +27,8 @@ phải đến từ tác giả. Skill không suy ra, không ước lượng, khô
 3. `blog/drafts/<slug>/idea.md` — dữ kiện gốc từ capture
 
 Thiếu `outline.md` → dừng, bảo tác giả chạy `blog-angle`.
-`voice.md` còn `[CẦN TÁC GIẢ ĐIỀN]` ở mục 6 → vẫn viết được, nhưng báo trước rằng giọng
-văn sẽ trung tính hơn mong đợi cho tới khi mục đó được điền.
+`voice.md` còn `[CẦN TÁC GIẢ ĐIỀN]` hoặc `GỢI Ý — CHƯA DUYỆT` ở mục 6 → vẫn viết được, nhưng báo
+trước rằng giọng văn sẽ trung tính hơn mong đợi cho tới khi tác giả điền/sửa mục đó.
 
 ---
 
@@ -51,12 +54,12 @@ FACT-GAP (OPTIONAL)
 
 Tác giả trả lời gạch đầu dòng, sai chính tả, tiếng Việt không dấu — đều chấp nhận.
 
-**Quy tắc cứng:** không có câu trả lời cho một mục `BLOCKING` → viết `[CẦN SỐ LIỆU: mô tả
-cụ thể cần gì]` chình ình ngay tại chỗ đó trong bài. Không làm mượt cho qua, không viết
-"đáng kể", không viết "một số trường hợp". `blog-review` sẽ chặn bài nếu placeholder còn sót.
+**Quy tắc cứng:** không có câu trả lời cho một mục `BLOCKING`:
+- Mục là **số liệu** → viết lại đoạn đó thành kịch bản minh hoạ với số tự đặt, gắn `<!-- minh hoạ -->`.
+- Mục là **thông báo lỗi, tên hàm, kết quả đo thật** mà bài không thể kể khác đi → viết
+  `[CẦN SỐ LIỆU: mô tả cụ thể cần gì]` ngay tại chỗ. `blog-review` sẽ chặn bài nếu placeholder còn sót.
 
-Nếu tác giả nói "cứ viết đi, số liệu điền sau" → vẫn viết, nhưng giữ nguyên placeholder
-và nhắc lại là bài chưa đăng được.
+Tác giả nói "cứ viết đi, số liệu điền sau" → vẫn viết theo hai luật trên, nhắc lại chỗ nào đang minh hoạ.
 
 ---
 
@@ -179,6 +182,7 @@ Lệch thì sửa, đừng bỏ qua — marker mồ côi sẽ lộ ra trong bả
 Chạy `node blog/bin/blog.js stats <slug>` rồi báo gọn:
 - số chữ, thời gian đọc
 - số `[CẦN SỐ LIỆU]` còn sót
+- những câu đang dùng số minh hoạ (để tác giả thay bằng số thật nếu có)
 - số ảnh theo từng loại, số ảnh còn `TODO` / `NEEDS_CAPTURE`
 
 **Không tự chạy `blog-review`.** Hỏi tác giả có muốn review không.
