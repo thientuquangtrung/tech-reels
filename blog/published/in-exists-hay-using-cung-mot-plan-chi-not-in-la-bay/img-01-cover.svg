@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" width="1600" height="900">
+  <defs>
+    <linearGradient id="fall" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#4ea8de" stop-opacity="0.55"/>
+      <stop offset="1" stop-color="#4ea8de" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+  <rect width="1600" height="900" fill="#1a1a2e"/>
+
+  <!-- ba đường (IN / EXISTS / USING) hội tụ về một điểm -->
+  <g fill="none" stroke="#4ea8de" stroke-width="6" stroke-linecap="round">
+    <path d="M140 170 C 480 170, 620 400, 860 400"/>
+    <path d="M140 400 C 480 400, 620 400, 860 400"/>
+    <path d="M140 630 C 480 630, 620 400, 860 400"/>
+  </g>
+  <g fill="#4ea8de">
+    <circle cx="140" cy="170" r="12"/>
+    <circle cx="140" cy="400" r="12"/>
+    <circle cx="140" cy="630" r="12"/>
+  </g>
+
+  <!-- một cây plan duy nhất -->
+  <g fill="none" stroke="#4ea8de" stroke-width="5" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M860 400 H 1010"/>
+    <path d="M1010 400 V 270 H 1170"/>
+    <path d="M1010 400 V 530 H 1170"/>
+    <path d="M1170 270 V 200 H 1330"/>
+    <path d="M1170 270 V 340 H 1330"/>
+    <path d="M1170 530 H 1330"/>
+  </g>
+  <g fill="#1a1a2e" stroke="#4ea8de" stroke-width="5">
+    <circle cx="860" cy="400" r="22" fill="#4ea8de"/>
+    <circle cx="1010" cy="400" r="16"/>
+    <circle cx="1170" cy="270" r="16"/>
+    <circle cx="1170" cy="530" r="16"/>
+    <rect x="1316" y="186" width="28" height="28" rx="4"/>
+    <rect x="1316" y="326" width="28" height="28" rx="4"/>
+    <rect x="1316" y="516" width="28" height="28" rx="4"/>
+  </g>
+
+  <!-- mặt đất và vách đá -->
+  <path d="M100 780 H 1060 V 900" fill="none" stroke="#4ea8de" stroke-opacity="0.25" stroke-width="3"/>
+  <!-- đường thứ tư (NOT IN) chạy trên mặt đất rồi rơi khỏi mép -->
+  <path d="M140 740 H 980 C 1030 740, 1060 750, 1075 790" fill="none" stroke="#4ea8de" stroke-opacity="0.5" stroke-width="6" stroke-linecap="round" stroke-dasharray="2 16"/>
+  <circle cx="140" cy="740" r="12" fill="#4ea8de" fill-opacity="0.5"/>
+  <path d="M1075 790 C 1090 830, 1095 860, 1098 900" fill="none" stroke="url(#fall)" stroke-width="6" stroke-linecap="round" stroke-dasharray="2 16"/>
+</svg>

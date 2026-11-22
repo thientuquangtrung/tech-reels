@@ -109,3 +109,43 @@ làm bài, `idea-intake` lấy ra làm video. Không sửa file này bằng tay 
 - **Kênh:** video (learn_public)
 
 ---
+
+## [PASSED] 2026-11-22 — IN vs EXISTS vs USING: khác nhau thật ở đâu
+
+- **Bối cảnh:** gặp khi viết TypeORM migration xoá dữ liệu cha/con trên Postgres: câu `WHERE x IN (SELECT ...)` chạy đúng, nhưng được góp ý nên đổi sang `EXISTS` hoặc `USING` — và chưa rõ ba cách khác nhau thật ở đâu.
+- **Quyết định:** ? (đang cân nhắc giữ `IN` hay đổi sang `EXISTS` / `DELETE ... USING`)
+- **Vì sao:** chưa rõ khác biệt thật giữa ba cách: `IN` "gom danh sách rồi so khớp", `EXISTS` "kiểm từng dòng, ngắt sớm", `USING` là join delete riêng của Postgres. Điểm chắc chắn đáng kể: `NOT IN` gặp một `NULL` trong subquery là trả rỗng, `NOT EXISTS` thì không.
+- **Cái giá:** `USING` không chạy được trên DB khác; `EXISTS` dài hơn, cần alias.
+- **Ai cần biết:** dev backend viết migration / câu DELETE có subquery trên Postgres.
+- **Chứng cứ có sẵn:** code migration gốc; ví dụ 6 dòng dữ liệu mẫu (101/102 cha, 201–204 con) đã dựng step-by-step. Phần giải thích cơ chế đến từ chat với Gemini — cần kiểm bằng `EXPLAIN ANALYZE` (Postgres thường biến `IN (subquery)` thành semi-join giống `EXISTS`).
+- **Kênh:** cả hai — video (wrong_right: `NOT IN` + NULL vs `NOT EXISTS`), blog (so sánh ba cách kèm plan thật)
+- **Cần ẩn danh:** tên bảng/cột/class thật của migration gốc và các khái niệm nghiệp vụ — không ghi vào repo.
+- **Đã thành:** blog/published/in-exists-hay-using-cung-mot-plan-chi-not-in-la-bay (kênh video còn trống)
+
+---
+
+## [RAW] 2026-11-22 — Migration xoá dữ liệu: down() để trống là cái bẫy
+
+- **Bối cảnh:** migration xoá dữ liệu không khôi phục được, `down()` để trống với comment "Deleted rows cannot be restored".
+- **Quyết định:** ? (đề xuất: `down()` throw Error)
+- **Vì sao:** `down()` rỗng thì `migration:revert` "thành công" âm thầm, xoá bản ghi trong bảng migrations → lần deploy sau `up()` chạy lại DELETE, người revert tưởng dữ liệu đã quay lại.
+- **Cái giá:** không revert được migration đó nữa; muốn lùi phải xử lý tay.
+- **Ai cần biết:** dev dùng TypeORM (hoặc tool migration có up/down) viết data migration.
+- **Chứng cứ có sẵn:** code migration gốc.
+- **Kênh:** video (wrong_right)
+- **Cần ẩn danh:** tên bảng / class migration như mục trên.
+
+---
+
+## [RAW] 2026-11-22 — 23k dòng cần xoá: có cần batch delete không
+
+- **Bối cảnh:** cùng migration trên; đếm thật được ~510.584 dòng tổng và ~23.570 dòng cha type 'E' (chưa đếm số dòng con).
+- **Quyết định:** ? (hướng: giữ DELETE một lệnh trong migration, deploy off-peak)
+- **Vì sao:** ở quy mô này không đáng tách batch; batch / tách khỏi migration / table swap + `VACUUM ANALYZE` chỉ cần khi hàng triệu dòng (lock, statement timeout, WAL, replica lag).
+- **Cái giá:** vẫn giữ lock trong một transaction migration; chưa đo thời gian chạy thật.
+- **Ai cần biết:** dev backend phải xoá/dọn dữ liệu qua migration trên bảng đang chạy production.
+- **Chứng cứ có sẵn:** số đếm thật 510.584 / 23.570. Ước tính "1–3 giây" là của Gemini, chưa đo.
+- **Kênh:** blog
+- **Cần ẩn danh:** tên bảng / cột.
+
+---

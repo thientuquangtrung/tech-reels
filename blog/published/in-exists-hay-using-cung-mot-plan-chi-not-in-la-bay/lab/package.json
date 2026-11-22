@@ -1,0 +1,11 @@
+{
+  "name": "pg-in-exists-not-in-lab",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "lab": "node lab.mjs"
+  },
+  "dependencies": {
+    "pg": "^8.16.0"
+  }
+}
